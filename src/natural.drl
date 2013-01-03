@@ -1,0 +1,33 @@
+package com.lunatech.drools.traits.rules.natural
+
+/*
+
+*/
+
+import com.lunatech.drools.traits.model.*;
+import function com.lunatech.drools.traits.RuleFunctions.log;
+
+query "natural"
+	value : NaturalNumber(value < 21)
+end
+
+
+rule "Natural number"
+when
+	not NaturalNumber()
+then
+	insert(new NaturalNumber(1));
+	log(drools, "");
+end
+
+
+rule "Next natural number"
+when
+	NaturalNumber($n : value < 500)
+	not NaturalNumber(value == $n + 1)
+then
+	insert(new NaturalNumber($n + 1));
+	log(drools, "%d", $n + 1);
+end
+
+

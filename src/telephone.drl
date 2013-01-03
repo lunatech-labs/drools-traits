@@ -1,0 +1,46 @@
+package com.lunatech.drools.traits.rules.telephone
+
+/*
+    In mathematics, the telephone numbers or involution numbers are a sequence of integers that count the number of ways that n subscribers to a telephone system can be linked in pairs
+    http://en.wikipedia.org/wiki/Telephone_number_(mathematics)
+*/
+
+import com.lunatech.drools.traits.model.*;
+import function com.lunatech.drools.traits.RuleFunctions.log;
+
+declare trait TelephoneNumber
+    index : int
+    value : Long
+end
+
+query "telephone"
+	value : TelephoneNumber()
+end
+
+rule "First telephone numbers"
+when
+    not TelephoneNumber()
+    $n : NaturalNumber(value == 1)
+    $m : NaturalNumber(value == 2)
+then
+    final TelephoneNumber t1 = don($n, TelephoneNumber.class);
+    final TelephoneNumber t2 = don($m, TelephoneNumber.class);
+    t1.setIndex(1);
+    t2.setIndex(2);
+    update(t1);
+    update(t2);
+    log(drools, "");
+end
+
+rule "Telephone number"
+when
+    TelephoneNumber($i : index, $n : value)
+    TelephoneNumber($j : index == $i + 1, $m : value)
+    not TelephoneNumber(index == $i + 2)
+    $next : NaturalNumber(value == $m + ($j * $n))
+then
+    final TelephoneNumber t = don($next, TelephoneNumber.class);
+    t.setIndex($i + 2);
+    update(t);
+    log(drools, "%d", $next.getValue());
+end

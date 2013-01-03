@@ -1,0 +1,31 @@
+package com.lunatech.drools.traits.rules.perfect
+
+/*
+    In number theory, a perfect number is a positive integer that is equal to the sum of its proper positive divisors
+    http://en.wikipedia.org/wiki/Perfect_number
+*/
+
+import com.lunatech.drools.traits.model.*;
+import function com.lunatech.drools.traits.RuleFunctions.log;
+
+declare trait PerfectNumber
+
+end
+
+query "perfect"
+	value : PerfectNumber()
+end
+
+
+rule "Perfect number"
+no-loop
+when
+    $number : NaturalNumber($n : value)
+    Number(longValue == $n) from accumulate(
+        NaturalNumber($v : value < $n, $n % value == 0),
+        sum($v)
+    )
+then
+    don($number, PerfectNumber.class);
+    log(drools, "%d", $n);
+end

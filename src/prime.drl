@@ -1,0 +1,51 @@
+package com.lunatech.drools.traits.rules.prime
+
+/*
+    A prime number (or a prime) is a natural number greater than 1 that has no positive divisors other than 1 and itself.
+    http://en.wikipedia.org/wiki/Prime_number
+*/
+
+import com.lunatech.drools.traits.model.*;
+import function com.lunatech.drools.traits.RuleFunctions.log;
+
+declare trait PrimeNumber
+    value : Long
+end
+
+declare trait CompositeNumber
+    value : Long
+end
+
+query "prime"
+	value : PrimeNumber(value < 100)
+end
+
+rule "First prime"
+when
+    not PrimeNumber()
+    $p : NaturalNumber(value == 2)
+then
+    don($p, PrimeNumber.class);
+    log(drools, "");
+end
+
+# Mark all multiples of prime numbers as composite, and therefore not prime.
+rule "Composite"
+salience 1
+when
+    $composite : NaturalNumber($n : value, this not isA CompositeNumber)
+    PrimeNumber($p : value < $n, eval($n % value == 0))
+then
+    don($composite, CompositeNumber.class);
+    log(drools, "%d", $n);
+end
+
+# After all multiples of primes have been marked, the smallest unmarked number is the next prime.
+rule "Next prime"
+when
+    $prime : NaturalNumber($n : value > 1, this not isA PrimeNumber, this not isA CompositeNumber)
+    not NaturalNumber(value > 1 && < $n, this not isA PrimeNumber, this not isA CompositeNumber)
+then
+    don($prime, PrimeNumber.class);
+    log(drools, "%d", $n);
+end
