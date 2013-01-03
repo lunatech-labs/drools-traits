@@ -8,4 +8,4 @@ This code is developed for Drools 5.5.0.Final.
 
 ## Usage
 
-Add the JAR files in `drools-5.5.0.Final/binaries/` to the runtime classpath, and run the `com.lunatech.drools.traits.RulesService` class.
+Add `src` directory and the JAR files in `drools-5.5.0.Final/binaries/` to the runtime classpath, and run the `com.lunatech.drools.traits.RulesService` class.
